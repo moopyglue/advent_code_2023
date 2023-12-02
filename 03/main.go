@@ -1,4 +1,4 @@
-// AOC 2023 - day ?
+// AOC 2023 - day 3
 
 package main
 

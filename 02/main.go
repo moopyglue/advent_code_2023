@@ -1,3 +1,5 @@
+// AOC 2023 - day 2 - Cube Conundrum
+
 package main
 
 import (
