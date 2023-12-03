@@ -6,29 +6,101 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"regexp"
+	"strconv"
 )
 
 // debug flags
 var debug = map[string]bool{"info": true}
 
-func part1() (result int) {
+// struct describes the data for each partnumber
+// on the schematic
+type part struct {
+	x       int
+	y       int
+	leng    int
+	partnum int
+}
 
-	result = 0
-	for _, line := range getlines() {
-		pinfo(line)
+// scan the schematic and extract all the partnumbers
+// to an array
+func get_parts(data []string) (part_list []part) {
+
+	// extract all the partnumbers
+	last_isnum := false
+	partnum := 0
+	y_start := 0
+	for x := 0; x < len(data); x++ {
+		for y := 0; y < len(data[0]); y++ {
+
+			if data[x][y] >= '0' && data[x][y] <= '9' { // this is a digit 0-9
+				if !last_isnum {
+					y_start = y
+				}
+				n, _ := strconv.Atoi(string(data[x][y]))
+				partnum = (partnum * 10) + n
+				last_isnum = true
+			} else { // is not a digit
+				if last_isnum {
+					part_list = append(part_list, part{x, y_start, (y - y_start), partnum})
+					last_isnum = false
+					partnum = 0
+				}
+			}
+
+		}
 	}
 	return
-
 }
 
-func part2() (result int) {
+func part1(data []string, parts []part) (result int) {
 
-	result = 0
+	re := regexp.MustCompile("[^0-9.]")
+
+	// for each part found look for surrounding symbols
+	for _, n := range parts {
+		// build a string containing all chars surrounding the part
+		test_str := data[n.x-1][n.y-1:(n.y-1)+n.leng+2] + data[n.x][n.y-1:(n.y-1)+n.leng+2] + data[n.x+1][n.y-1:(n.y-1)+n.leng+2]
+		// look for symbols in that string
+		if re.Match([]byte(test_str)) {
+			result += n.partnum
+		}
+	}
 	return
-
 }
 
-// returns input as eitrhegr from standard input or uses first
+func part2(data []string, parts []part) (result int) {
+
+	// look for all "*" synbols and then match to found part numbers
+	for x := 0; x < len(data); x++ {
+		for y := 0; y < len(data[0]); y++ {
+			if data[x][y] != '*' {
+				continue
+			}
+
+			// generate a list of parts that touch this star
+			tmp_parts := []part{}
+			for _, n := range parts {
+				if x > n.x+1 || x < n.x-1 {
+					continue
+				}
+				if y > n.y+n.leng || y < n.y-1 {
+					continue
+				}
+				tmp_parts = append(tmp_parts, n)
+			}
+
+			// if exactly 2 parts overlapping then mutiey and add to result
+			if len(tmp_parts) == 2 {
+				result = result + (tmp_parts[0].partnum * tmp_parts[1].partnum)
+			}
+		}
+	}
+
+	return
+}
+
+// returns input as either from standard input or uses first
 // command line parameter for filename
 func getlines() (lines []string) {
 
@@ -57,13 +129,22 @@ func getlines() (lines []string) {
 // debug printing for INFO style lines
 func pinfo(params ...interface{}) {
 	if debug["info"] {
-		fmt.Println(params)
+		fmt.Println("INFO:", params)
 	}
 }
 
 func main() {
-	part1res := part1()
-	part2res := part2()
+
+	var data []string
+	for _, line := range getlines() {
+		data = append(data, line)
+	}
+
+	part_list := get_parts(data)
+
+	part1res := part1(data, part_list)
+	part2res := part2(data, part_list)
+
 	fmt.Println("part 1 =", part1res)
 	fmt.Println("part 2 =", part2res)
 	os.Exit(0)
