@@ -1,4 +1,4 @@
-// AOC 2023 - day 3
+// AOC 2023 - day 3 - Gear Ratios
 
 package main
 
@@ -10,8 +10,17 @@ import (
 	"strconv"
 )
 
-// debug flags
 var debug = map[string]bool{"info": true}
+
+func main() {
+
+	data := getlines()
+	parts := get_parts(data)
+	part1res := part1(data, parts)
+	part2res := part2(data, parts)
+	fmt.Println("part 1 =", part1res)
+	fmt.Println("part 2 =", part2res)
+}
 
 // struct describes the data for each partnumber
 // on the schematic
@@ -26,22 +35,28 @@ type part struct {
 // to an array
 func get_parts(data []string) (part_list []part) {
 
-	// extract all the partnumbers
 	last_isnum := false
 	partnum := 0
 	y_start := 0
+
+	// scan through each charcter of schematic hoovering up part numbers and recording them
 	for x := 0; x < len(data); x++ {
 		for y := 0; y < len(data[0]); y++ {
 
-			if data[x][y] >= '0' && data[x][y] <= '9' { // this is a digit 0-9
+			if data[x][y] >= '0' && data[x][y] <= '9' {
+
+				// this is a digit 0-9
 				if !last_isnum {
 					y_start = y
 				}
 				n, _ := strconv.Atoi(string(data[x][y]))
 				partnum = (partnum * 10) + n
 				last_isnum = true
-			} else { // is not a digit
+
+			} else {
+
 				if last_isnum {
+					// not a digit and previous char was a digit
 					part_list = append(part_list, part{x, y_start, (y - y_start), partnum})
 					last_isnum = false
 					partnum = 0
@@ -100,7 +115,7 @@ func part2(data []string, parts []part) (result int) {
 	return
 }
 
-// returns input as either from standard input or uses first
+// returns input as eitrhegr from standard input or uses first
 // command line parameter for filename
 func getlines() (lines []string) {
 
@@ -131,21 +146,4 @@ func pinfo(params ...interface{}) {
 	if debug["info"] {
 		fmt.Println("INFO:", params)
 	}
-}
-
-func main() {
-
-	var data []string
-	for _, line := range getlines() {
-		data = append(data, line)
-	}
-
-	part_list := get_parts(data)
-
-	part1res := part1(data, part_list)
-	part2res := part2(data, part_list)
-
-	fmt.Println("part 1 =", part1res)
-	fmt.Println("part 2 =", part2res)
-	os.Exit(0)
 }

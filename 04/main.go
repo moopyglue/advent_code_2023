@@ -1,4 +1,4 @@
-// AOC 2023 - day ? - ?
+// AOC 2023 - day 4 - ?
 
 package main
 
@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 )
+
 var debug = map[string]bool{"info": true}
 
 func main() {
@@ -67,4 +68,3 @@ func pinfo(params ...interface{}) {
 		fmt.Println(params)
 	}
 }
-
