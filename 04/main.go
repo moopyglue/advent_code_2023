@@ -5,26 +5,34 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"math"
 	"os"
 	"strings"
 )
 
-var debug = map[string]bool{"info": true}
+var debug = map[string]bool{"info": false}
 
 type card struct {
-	nums map[string]bool
-	wins []string
+	cardnum int
+	nums    map[string]bool
+	wins    []string
 }
 
 func main() {
 
-	var data = []card{}
-	for _, l := range getlines() {
+	var data = map[int]card{}
+	for cn, l := range getlines() {
+		var c = card{cardnum: cn + 1, nums: make(map[string]bool), wins: make([]string, 0)}
 		x := strings.Split(l, "|")
-		for _, y := range strings.Split(x[0], " ") {
-
+		for _, y := range strings.Split(x[1], " ") {
+			c.nums[y] = true
 		}
-		z := strings.Split(x[1], " ")
+		for _, y := range strings.Split(x[0], " ") {
+			if _, ok := c.nums[y]; ok {
+				c.wins = append(c.wins, y)
+			}
+		}
+		data[cn+1] = c
 
 	}
 
@@ -34,16 +42,37 @@ func main() {
 	fmt.Println("part 2 =", part2res)
 }
 
-func part1(data []card) (result int) {
+func part1(data map[int]card) (result int) {
 
 	result = 0
+	for _, c := range data {
+		score := math.Pow(2, float64(len(c.wins)-1))
+		if score >= 1 {
+			result += int(score)
+			pinfo(score, result)
+		}
+	}
 	return
 
 }
 
-func part2(data []card) (result int) {
+func part2(data map[int]card) (result int) {
 
-	result = 0
+	toprocess := []int{}
+	for x := 1; x <= len(data); x++ {
+		toprocess = append(toprocess, data[x].cardnum)
+	}
+
+	processing := 0
+	for processing < len(toprocess) {
+		var c = data[toprocess[processing]]
+		pinfo(c)
+		for x := 1; x <= len(c.wins); x++ {
+			toprocess = append(toprocess, c.cardnum+x)
+		}
+		processing++
+	}
+	result = processing
 	return
 
 }
