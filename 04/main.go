@@ -6,30 +6,42 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 )
 
 var debug = map[string]bool{"info": true}
 
+type card struct {
+	nums map[string]bool
+	wins []string
+}
+
 func main() {
 
-	var data = getlines()
+	var data = []card{}
+	for _, l := range getlines() {
+		x := strings.Split(l, "|")
+		for _, y := range strings.Split(x[0], " ") {
+
+		}
+		z := strings.Split(x[1], " ")
+
+	}
+
 	part1res := part1(data)
 	part2res := part2(data)
 	fmt.Println("part 1 =", part1res)
 	fmt.Println("part 2 =", part2res)
 }
 
-func part1(data []string) (result int) {
+func part1(data []card) (result int) {
 
 	result = 0
-	for _, line := range getlines() {
-		pinfo(line)
-	}
 	return
 
 }
 
-func part2(data []string) (result int) {
+func part2(data []card) (result int) {
 
 	result = 0
 	return
