@@ -1,4 +1,4 @@
-// AOC 2023 - day 4 - ?
+// AOC 2023 - day 4 - Scratchcards
 
 package main
 
@@ -16,24 +16,34 @@ type card struct {
 	cardnum int
 	nums    map[string]bool
 	wins    []string
+	score   int
 }
 
 func main() {
 
 	var data = map[int]card{}
+
+	// build a map of all the cards
+	// NOTE: source file altered for simpler processing ("Card #:" and superflous spaces removed)
 	for cn, l := range getlines() {
-		var c = card{cardnum: cn + 1, nums: make(map[string]bool), wins: make([]string, 0)}
+
+		// create a 'card' from data row
+		var c = card{cardnum: cn + 1, nums: make(map[string]bool), wins: make([]string, 0), score: 0}
 		x := strings.Split(l, "|")
+
 		for _, y := range strings.Split(x[1], " ") {
-			c.nums[y] = true
+			c.nums[y] = true // creating lookup list
 		}
+
 		for _, y := range strings.Split(x[0], " ") {
 			if _, ok := c.nums[y]; ok {
-				c.wins = append(c.wins, y)
+				c.wins = append(c.wins, y) // creating win list
 			}
 		}
-		data[cn+1] = c
 
+		// count the matching wins
+		c.score = len(c.wins)
+		data[cn+1] = c
 	}
 
 	part1res := part1(data)
@@ -44,12 +54,12 @@ func main() {
 
 func part1(data map[int]card) (result int) {
 
+	// review each card and calculate a total score
 	result = 0
 	for _, c := range data {
-		score := math.Pow(2, float64(len(c.wins)-1))
+		score := math.Pow(2, float64(c.score-1))
 		if score >= 1 {
 			result += int(score)
-			pinfo(score, result)
 		}
 	}
 	return
@@ -58,17 +68,22 @@ func part1(data map[int]card) (result int) {
 
 func part2(data map[int]card) (result int) {
 
-	toprocess := []int{}
+	// Create a list of card numbers that need processed
+	// to_process[] is a list of card numbers rather than actual cards
+	// as there will be a LOT of cards
+	to_process := []int{}
 	for x := 1; x <= len(data); x++ {
-		toprocess = append(toprocess, data[x].cardnum)
+		to_process = append(to_process, data[x].cardnum)
 	}
 
+	// process each card, adding cards to the end of the list
+	// as we continue.
 	processing := 0
-	for processing < len(toprocess) {
-		var c = data[toprocess[processing]]
-		pinfo(c)
-		for x := 1; x <= len(c.wins); x++ {
-			toprocess = append(toprocess, c.cardnum+x)
+	for processing < len(to_process) {
+		// var c = data[to_process[processing]]
+		// pinfo(data[to_process[processing]])
+		for x := 1; x <= data[to_process[processing]].score; x++ {
+			to_process = append(to_process, data[to_process[processing]].cardnum+x)
 		}
 		processing++
 	}
