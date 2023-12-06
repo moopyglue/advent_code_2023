@@ -1,4 +1,12 @@
 // AOC 2023 - day ? - ?
+// ──────────────────────────────────────
+// ──────────╔╗──╔═╗───────╔╗──────╔╗────
+// ─────────╔╝╚╗─║╔╝───────║║──────║║────
+// ────╔═╗╔═╩╗╔╝╔╝╚╦╦═╗╔╦══╣╚═╦══╦═╝║────
+// ────║╔╗╣╔╗║║─╚╗╔╬╣╔╗╬╣══╣╔╗║║═╣╔╗║────
+// ────║║║║╚╝║╚╗─║║║║║║║╠══║║║║║═╣╚╝║────
+// ────╚╝╚╩══╩═╝─╚╝╚╩╝╚╩╩══╩╝╚╩══╩══╝────
+// ──────────────────────────────────────
 
 package main
 
@@ -17,92 +25,105 @@ var path = []string{"seed", "soil", "fertilizer", "water", "light", "temperature
 type span struct {
 	start int64
 	end   int64
+	diff  int64
+}
+
+type resmap struct {
+	from string
+	to   string
+	list []span
 }
 
 func main() {
 
-	var spans = []span{}
+	var almanac = getalmanac()
+
+	// part 1
+	master_map := resmap{from: "", to: "", list: []span{{start: 79, end: 93, diff: 0},{start: 55, end: 68, diff: 0}	} }
+	pinfo(master_map)
+	for _, s := range path {
+		master_map = merge_map(master_map, almanac[s])
+		fmt.Println("-------------------")
+		pinfo(almanac[s])
+		pinfo(master_map)
+		fmt.Println("")
+	}
+
+}
+
+func merge_map(orig, newlayer resmap) (res resmap) {
+
+	var spans = []span{orig}
+	var unchanged = []span{}
 	var newspans = []span{}
+
+	for true {
+
+	}
+	for _, orig := range spans {
+		fmt.Println("checking", orig, "...")
+		if newstart > orig.start && newstart <= orig.end {
+			pinfo("upper untouched mapped span", orig.start, newstart-1)
+			newspans = append(newspans, span{orig.start, (newstart - 1)})
+		}
+		if newend < orig.end && newend >= orig.start {
+			pinfo("lower untouched mapped span", newend+1, orig.end)
+			newspans = append(newspans, span{newend + 1, orig.end})
+		}
+		if newend < orig.start || newstart > orig.end {
+			pinfo("keeping original", orig)
+			newspans = append(newspans, orig)
+		}
+
+		// a cropped mapped span is stored seperatly until the next
+		// map is started or the file runs out
+		xstart := newstart
+		xend := newend
+		if xstart < orig.start {
+			xstart = orig.start
+		}
+		if xend > orig.end {
+			xend = orig.end
+		}
+		pinfo("a cropped mapped span,", xstart, xend, "adding", newdiff)
+		tmpspans = append(tmpspans, span{xstart + newdiff, xend + newdiff})
+
+		// saved spans in newspans repalces originals from spans
+
+	return
+}
+
+func getalmanac() (almanac map[string]resmap) {
+
+	// read in the data
+	// go makes hard work of this as you have to do sepcific conversions
+	almanac = map[string]resmap{}
+	var map_from = ""
+	var map_to = ""
 	for _, line := range getlines() {
 
-		// ignore some lines
-		if line == "" {
-			continue
-		}
-
 		tokens := strings.Split(line, " ")
-		if tokens[1] == "map:" {
-			pinfo("..........................................................", line)
-			spans = newspans
-			newspans = []span{}
+		if line == "" || tokens[0] == "seeds:" {
+			// ignore blank lines and seed line
 			continue
-		}
-
-		// convert seeds to initial spans
-		if tokens[0] == "seeds:" {
-			// read in seeds
-			tokens = tokens[1:]
-			for len(tokens) > 0 {
-				from, _ := strconv.ParseInt(tokens[0], 10, 0)
-				count, _ := strconv.ParseInt(tokens[1], 10, 0)
-				to := from + (count - 1)
-				s := span{start: from, end: to}
-				newspans = append(newspans, s)
-				tokens = tokens[2:]
+		} else if tokens[1] == "map:" {
+			// set tags for new resmap for new set of relationships
+			tok3 := strings.Split(tokens[0], "-")
+			map_from = tok3[0]
+			map_to = tok3[2]
+		} else {
+			entry, ok := almanac[map_from]
+			if !ok {
+				// for first new span of a map create resmap to contain it
+				entry = resmap{from: map_from, to: map_to, list: []span{}}
 			}
-			pinfo("seeds:", newspans)
-			continue
-		}
-
-		fmt.Println("")
-		for _, s := range spans {
-			pinfo(s)
-		}
-
-		var newstart, newcount, newdest, newend, newdiff int64
-		newdest, _ = strconv.ParseInt(tokens[0], 10, 0)
-		newstart, _ = strconv.ParseInt(tokens[1], 10, 0)
-		newcount, _ = strconv.ParseInt(tokens[2], 10, 0)
-		newend = newstart + (newcount - 1)
-		newdiff = newdest - newstart
-		pinfo("========>", line)
-		pinfo("========>", newstart, newend, newdiff)
-
-		var tmpspans = []span{}
-		for _, orig := range spans {
-			fmt.Println("checking", orig, "...")
-			if newstart > orig.start && newstart <= orig.end {
-				pinfo("uppper insert", orig.start, newstart-1)
-				tmpspans = append(tmpspans, span{orig.start, (newstart - 1)})
-			}
-			if newend < orig.end && newend >= orig.start {
-				pinfo("lower insert", newend+1, orig.end)
-				tmpspans = append(tmpspans, span{newend + 1, orig.end})
-			}
-			if newend < orig.start || newstart > orig.end {
-				pinfo("keeping", orig)
-				tmpspans = append(tmpspans, orig)
-			}
-			xstart := newstart
-			xend := newend
-			if xstart < orig.start {
-				xstart = orig.start
-			}
-			if xend > orig.end {
-				xend = orig.end
-			}
-			pinfo("Shurunk", xstart, xend, "adding", newdiff)
-			newspans = append(newspans, span{xstart + newdiff, xend + newdiff})
-
+			// add span to existing resmap entry
+			entry.list = append(entry.list, span{start: i64(tokens[1]), end: i64(tokens[1]) + (i64(tokens[2]) - 1), diff: i64(tokens[0]) - i64(tokens[1])})
+			almanac[map_from] = entry
 		}
 
 	}
-
-	fmt.Println("")
-	for _, s := range spans {
-		pinfo(s)
-	}
-
+	return
 }
 
 // returns input as eitrhegr from standard input or uses first
@@ -129,6 +150,11 @@ func getlines() (lines []string) {
 	}
 	return
 
+}
+
+func i64(s string) (i int64) {
+	i, _ = strconv.ParseInt(s, 10, 0)
+	return
 }
 
 // debug printing for INFO style lines
