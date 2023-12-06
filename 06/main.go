@@ -6,33 +6,46 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 )
+
 var debug = map[string]bool{"info": true}
 
 func main() {
 
 	var data = getlines()
 	part1res := part1(data)
-	part2res := part2(data)
 	fmt.Println("part 1 =", part1res)
-	fmt.Println("part 2 =", part2res)
 }
 
-func part1(data []string) (result int) {
-
+func win_count(length, record int64) (result int64) {
 	result = 0
+	for n := int64(1); n < length; n++ {
+		dist := n * (length - n)
+		if dist > record {
+			result++
+		}
+	}
+	return
+}
+
+func part1(data []string) (result int64) {
+
+	result = 1
 	for _, line := range getlines() {
-		pinfo(line)
+		k := strings.Split(line, " ")
+		result = result * win_count(i64(k[0]), i64(k[1]))
 	}
 	return
 
 }
 
-func part2(data []string) (result int) {
-
-	result = 0
+// quick and dirty string to int64 conversion to make code more
+// readable
+func i64(s string) (i int64) {
+	i, _ = strconv.ParseInt(s, 10, 0)
 	return
-
 }
 
 // returns input as eitrhegr from standard input or uses first
@@ -67,4 +80,3 @@ func pinfo(params ...interface{}) {
 		fmt.Println(params)
 	}
 }
-

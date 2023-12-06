@@ -68,48 +68,20 @@ func main() {
 		pinfo("========>", line)
 		pinfo("========>", newstart, newend, newdiff)
 
+		var tmpspans = []span{}
 		for _, orig := range spans {
 			fmt.Println("checking", orig, "...")
-			var tmpspan span
 			if newstart > orig.start && newstart <= orig.end {
 				pinfo("uppper insert", orig.start, newstart-1)
-				tmpspan = span{orig.start, (newstart - 1)}
-				exists := false
-				for _, v := range newspans {
-					if v.start == tmpspan.start && v.end == tmpspan.end {
-						exists = true
-					}
-				}
-				if !exists {
-					newspans = append(newspans, tmpspan)
-				}
+				tmpspans = append(tmpspans, span{orig.start, (newstart - 1)})
 			}
 			if newend < orig.end && newend >= orig.start {
 				pinfo("lower insert", newend+1, orig.end)
-				tmpspan = span{newend + 1, orig.end}
-				exists := false
-				for _, v := range newspans {
-					if v.start == tmpspan.start && v.end == tmpspan.end {
-						exists = true
-					}
-				}
-				if !exists {
-					newspans = append(newspans, tmpspan)
-				}
+				tmpspans = append(tmpspans, span{newend + 1, orig.end})
 			}
 			if newend < orig.start || newstart > orig.end {
 				pinfo("keeping", orig)
-				tmpspan = orig
-				exists := false
-				for _, v := range newspans {
-					if v.start == tmpspan.start && v.end == tmpspan.end {
-						exists = true
-					}
-				}
-				if !exists {
-					newspans = append(newspans, tmpspan)
-				}
-				continue
+				tmpspans = append(tmpspans, orig)
 			}
 			xstart := newstart
 			xend := newend

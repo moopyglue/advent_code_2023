@@ -28,6 +28,8 @@ type resmap struct {
 
 func main() {
 
+	// read in the data
+	// go makes hard work of this as you have to do sepcific conversions
 	var almanac = map[string]resmap{}
 	var seeds = []int64{}
 	var map_from = ""
@@ -43,12 +45,9 @@ func main() {
 		if tokens[0] == "seeds:" {
 			// read in seeds
 			for k, v := range tokens {
-				if k == 0 {
-					continue
+				if k != 0 {
+					seeds = append(seeds, i64(v))
 				}
-				var seed int64
-				seed, _ = strconv.ParseInt(v, 10, 0)
-				seeds = append(seeds, seed)
 			}
 			pinfo("seeds:", seeds)
 			continue
@@ -65,12 +64,7 @@ func main() {
 		if !ok {
 			entry = resmap{from: map_from, to: map_to, list: []relationship{}}
 		}
-
-		var x1, x2, x3 int64
-		x1, _ = strconv.ParseInt(tokens[0], 10, 0)
-		x2, _ = strconv.ParseInt(tokens[1], 10, 0)
-		x3, _ = strconv.ParseInt(tokens[2], 10, 0)
-		entry.list = append(entry.list, relationship{source: x2, dest: x1, count: x3})
+		entry.list = append(entry.list, relationship{source: i64(tokens[1]), dest: i64(tokens[0]), count: i64(tokens[2])})
 		almanac[map_from] = entry
 
 	}
@@ -135,6 +129,11 @@ func part2(almanac map[string]resmap, seeds []int64) (result int64) {
 	}
 	return
 
+}
+
+func i64(s string) (i int64) {
+	i, _ = strconv.ParseInt(s, 10, 0)
+	return
 }
 
 // returns input as eitrhegr from standard input or uses first
