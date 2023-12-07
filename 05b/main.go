@@ -37,6 +37,11 @@ type resmap struct {
 func main() {
 
 	var almanac = getalmanac()
+	pinfo("===== ALMANAC =====")
+	for _, s := range path {
+		pinfo(almanac[s])
+		fmt.Println("")
+	}
 
 	// part 1
 	master_map := resmap{from: "", to: "", list: []span{{start: 79, end: 93, diff: 0},{start: 55, end: 68, diff: 0}	} }
@@ -57,22 +62,19 @@ func merge_map(orig, newlayer resmap) (res resmap) {
 	var unchanged = []span{}
 	var newspans = []span{}
 
-	for true {
-
-	}
 	for _, orig := range spans {
-		fmt.Println("checking", orig, "...")
+
 		if newstart > orig.start && newstart <= orig.end {
 			pinfo("upper untouched mapped span", orig.start, newstart-1)
-			newspans = append(newspans, span{orig.start, (newstart - 1)})
+			unchanged = append(unchanged, span{orig.start, (newstart - 1),origin.diff})
 		}
 		if newend < orig.end && newend >= orig.start {
 			pinfo("lower untouched mapped span", newend+1, orig.end)
-			newspans = append(newspans, span{newend + 1, orig.end})
+			unchanged = append(unchanged, span{newend + 1, orig.end,orig.diff})
 		}
 		if newend < orig.start || newstart > orig.end {
 			pinfo("keeping original", orig)
-			newspans = append(newspans, orig)
+			unchanged = unchanged(newspans, orig)
 		}
 
 		// a cropped mapped span is stored seperatly until the next

@@ -6,6 +6,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
 )
 var debug = map[string]bool{"info": true}
 
@@ -59,6 +60,13 @@ func getlines() (lines []string) {
 	}
 	return
 
+}
+
+// quick and dirty single value response
+// string -> int64 conversion
+func i64(s string) (i int64) {
+	i, _ = strconv.ParseInt(s, 10, 0)
+	return
 }
 
 // debug printing for INFO style lines
