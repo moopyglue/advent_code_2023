@@ -4,7 +4,6 @@ package main
 
 import (
 	"bufio"
-	"encoding/json"
 	"fmt"
 	"os"
 	"sort"
@@ -170,10 +169,4 @@ func pinfo(params ...interface{}) {
 	if debug["info"] {
 		fmt.Println(params)
 	}
-}
-
-// debug printing for INFO style lines
-func jinfo(params ...interface{}) {
-	s, _ := json.MarshalIndent(params, "", "\t")
-	fmt.Println(s)
 }
