@@ -1,4 +1,4 @@
-// AOC 2023 - day 7 - Camel Cards
+// AOC 2023 - day 8 - Haunted Wasteland
 
 package main
 

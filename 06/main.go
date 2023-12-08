@@ -1,4 +1,4 @@
-// AOC 2023 - day ? - ?
+// AOC 2023 - day 6 - Wait For It
 
 package main
 
