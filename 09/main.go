@@ -1,4 +1,4 @@
-// AOC 2023 - day ????
+// AOC 2023 - day 9 - Mirage Maintenance
 
 package main
 
@@ -6,6 +6,8 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 	//"sort"
 	//"strings"
 )
@@ -15,19 +17,69 @@ var flags = map[string]bool{"info": true}
 func main() {
 
 	// turn input data to usable puzzle data structure
-    // var data = getlines()
-    var part1res = int64(0)
-    var part2res = int64(0)
+	var data = getlines()
+	var part1res = int64(0)
+	var part2res = int64(0)
 
 	// part 1
-	pinfo("PART 1")
+	for _, line := range data {
 
-	// part 2
-	pinfo("PART 2")
+		// convert line to integers
+		x := strings.Split(line, " ")
+		lols := [][]int64{{}}
+		for _, v := range x {
+			lols[0] = append(lols[0], i64(v))
+		}
+
+		// extrapelate till all zeros
+		lolcurr := 0
+		for {
+			newl := []int64{}
+			absx := int64(0)
+			for n := 1; n < len(lols[lolcurr]); n++ {
+				newl = append(newl, lols[lolcurr][n]-lols[lolcurr][n-1])
+				absx += abs(newl[len(newl)-1])
+			}
+			lolcurr++
+			lols = append(lols, newl)
+			if absx == 0 {
+				break
+			}
+		}
+
+		// part 1 - add a value to the end of each row to find new value
+		lols[lolcurr] = append(lols[lolcurr], int64(0))
+		for n := lolcurr - 1; n >= 0; n-- {
+			t := len(lols[n]) - 1
+			lols[n] = append(lols[n], lols[n][t]+lols[n+1][t])
+		}
+		part1res += lols[0][len(lols[0])-1]
+
+		// part 2 - add a value to the beginig  of each row
+		lols[lolcurr] = append([]int64{0}, lols[lolcurr]...)
+		for n := lolcurr - 1; n >= 0; n-- {
+			nv := lols[n][0] - lols[n+1][0]
+			lols[n] = append([]int64{nv}, lols[n]...)
+		}
+		part2res += lols[0][0]
+
+	}
 
 	// results
 	fmt.Println("part 1 =", part1res)
 	fmt.Println("part 2 =", part2res)
+}
+
+func abs(i int64) int64 {
+	if i < 0 {
+		return -i
+	}
+	return i
+}
+
+func i64(s string) (i int64) {
+	i, _ = strconv.ParseInt(s, 10, 0)
+	return
 }
 
 // returns input as eitrhegr from standard input or uses first
