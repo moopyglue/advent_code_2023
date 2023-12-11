@@ -1,4 +1,4 @@
-// AOC 2023 - day ? - ?
+// AOC 2023 - day 9 - Mirage Maintenance
 
 package main
 
@@ -8,32 +8,32 @@ import (
 	"os"
 	"strconv"
 )
-var debug = map[string]bool{"info": true}
+
+var flags = map[string]bool{"info": true}
 
 func main() {
 
 	var data = getlines()
-	part1res := part1(data)
-	part2res := part2(data)
+	var part1res = int64(0)
+	var part2res = int64(0)
+
+	// results
 	fmt.Println("part 1 =", part1res)
 	fmt.Println("part 2 =", part2res)
 }
 
-func part1(data []string) (result int) {
-
-	result = 0
-	for _, line := range getlines() {
-		pinfo(line)
+// ABS function is floating point, this is more efficent than a conversion
+func abs(i int64) int64 {
+	if i < 0 {
+		return -i
 	}
-	return
-
+	return i
 }
 
-func part2(data []string) (result int) {
-
-	result = 0
+// dirt int64 hack to remove need to error check
+func i64(s string) (i int64) {
+	i, _ = strconv.ParseInt(s, 10, 0)
 	return
-
 }
 
 // returns input as eitrhegr from standard input or uses first
@@ -62,17 +62,9 @@ func getlines() (lines []string) {
 
 }
 
-// quick and dirty single value response
-// string -> int64 conversion
-func i64(s string) (i int64) {
-	i, _ = strconv.ParseInt(s, 10, 0)
-	return
-}
-
 // debug printing for INFO style lines
 func pinfo(params ...interface{}) {
-	if debug["info"] {
+	if flags["info"] {
 		fmt.Println(params)
 	}
 }
-

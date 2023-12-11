@@ -16,15 +16,14 @@ var flags = map[string]bool{"info": true}
 
 func main() {
 
-	// turn input data to usable puzzle data structure
 	var data = getlines()
 	var part1res = int64(0)
 	var part2res = int64(0)
 
-	// part 1
+	// singlepass through all data
 	for _, line := range data {
 
-		// convert line to integers
+		// convert line to big integers
 		x := strings.Split(line, " ")
 		lols := [][]int64{{}}
 		for _, v := range x {
@@ -70,6 +69,7 @@ func main() {
 	fmt.Println("part 2 =", part2res)
 }
 
+// ABS function is floating point, this is more efficent than a conversion
 func abs(i int64) int64 {
 	if i < 0 {
 		return -i
@@ -77,6 +77,7 @@ func abs(i int64) int64 {
 	return i
 }
 
+// dirt int64 hack to remove need to error check
 func i64(s string) (i int64) {
 	i, _ = strconv.ParseInt(s, 10, 0)
 	return
