@@ -6,30 +6,18 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"regexp"
 	"strconv"
 	"strings"
 )
 
-var debug = map[string]bool{"info": true}
+var debug = map[string]bool{"info": false, "debug": false}
 
 type row struct {
-	known string
-	pat   []int
-	diff  int
-	whole bool
+	line string
+	cnts []int
 }
 
-var broken_string = " "
-var working_string = "O"
-
 func main() {
-
-	// create padded sttrings for ease of use later
-	for n := 0; n < 12; n++ {
-		broken_string += broken_string
-		working_string += working_string
-	}
 
 	fives := true
 	pinfo("starting")
@@ -37,11 +25,8 @@ func main() {
 	rows := []row{}
 	for _, v := range getlines() {
 		a := strings.Split(v, " ")
-		a[0] = strings.Replace(a[0], ".", " ", -1)
-		a[0] = strings.Replace(a[0], "?", ".", -1)
-		a[0] = strings.Replace(a[0], "#", "O", -1)
 		if fives {
-			a[0] = a[0] + "." + a[0] + "." + a[0] + "." + a[0] + "." + a[0]
+			a[0] = a[0] + "?" + a[0] + "?" + a[0] + "?" + a[0] + "?" + a[0]
 			a[1] = a[1] + "," + a[1] + "," + a[1] + "," + a[1] + "," + a[1]
 		}
 		b := strings.Split(a[1], ",")
@@ -50,59 +35,61 @@ func main() {
 		for _, k := range b {
 			i, _ := strconv.ParseInt(k, 10, 0)
 			p = append(p, int(i))
-			s = s + int(i)
 		}
 		s += len(p) - 1
-		rows = append(rows, row{known: a[0], pat: p, diff: len(a[0]) - s, whole: true})
+		rows = append(rows, row{line: a[0], cnts: p})
 	}
 
 	// for each row calculate the cost
-	part1res := 0
+	result := 0
 	for n := 0; n < len(rows); n++ {
-		pinfo(n, rows[n])
-		count := count_matches(rows[n])
-		part1res += count
-		pinfo(count, part1res)
+		pinfo(rows[n])
+		count := count_matches(rows[n].line, rows[n].cnts)
+		result += count
+		pinfo(n+1, count, result)
 	}
 
-	pinfo("part1", part1res)
+	fmt.Println("result", result)
 }
 
-var cache = map[string]bool{}
+var cache = map[string]int{}
 
-func count_matches(r row) (count int) {
-	count = 0
-	mod := 1
-	if r.whole {
-		mod = 0
-		r.whole = false
-	}
-	if len(r.pat) == 0 {
-		re := regexp.MustCompile(r.known)
-		if re.MatchString(broken_string[:len(r.known)]) {
-			count++
+func count_matches(line string, cnts []int) int {
+
+	xcount := 0
+	if line == "" {
+		if len(cnts) == 0 {
+			xcount = 1
+		}
+	} else if len(cnts) == 0 {
+		if !strings.Contains(line, "#") {
+			xcount = 1
 		}
 	} else {
-		for n := 0; n <= r.diff; n++ {
-			s := broken_string[:n+mod] + working_string[:r.pat[0]]
-			tt := s + r.known[:len(s)]
-			if qq, ok := cache[tt]; ok {
-				if qq {
-					count += count_matches(row{known: r.known[len(s):], pat: r.pat[1:], diff: r.diff - n})
+
+		key := fmt.Sprint(line, cnts)
+		if k, ok := cache[key]; ok {
+			return k
+		} else {
+
+			k := line[0]
+			if k == '?' || k == '.' {
+				xcount += count_matches(line[1:], cnts[:])
+			}
+
+			if k == '?' || k == '#' {
+				if len(line) == cnts[0] && !strings.Contains(line[:cnts[0]], ".") {
+					xcount += count_matches(line[cnts[0]:], cnts[1:])
 				}
-			} else {
-				re := regexp.MustCompile(r.known[:len(s)])
-				if re.MatchString(s) {
-					cache[tt] = true
-					count += count_matches(row{known: r.known[len(s):], pat: r.pat[1:], diff: r.diff - n})
-				} else {
-					cache[tt] = false
+				if len(line) > cnts[0] && !strings.Contains(line[:cnts[0]], ".") && line[cnts[0]:cnts[0]+1] != "#" {
+					xcount += count_matches(line[cnts[0]+1:], cnts[1:])
 				}
 			}
+			cache[key] = xcount
 		}
-		r.whole = false
 	}
-	return
+
+	return xcount
 }
 
 // returns input as eitrhegr from standard input or uses first
@@ -134,6 +121,13 @@ func getlines() (lines []string) {
 // debug printing for INFO style lines
 func pinfo(params ...interface{}) {
 	if debug["info"] {
+		fmt.Println(params)
+	}
+}
+
+// debug printing for INFO style lines
+func pdebug(params ...interface{}) {
+	if debug["debug"] {
 		fmt.Println(params)
 	}
 }
