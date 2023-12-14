@@ -49,7 +49,7 @@ func main() {
 					seeds = append(seeds, i64(v))
 				}
 			}
-			pinfo("seeds:", seeds)
+			// pinfo("seeds:", seeds)
 			continue
 		}
 		if tokens[1] == "map:" {
@@ -68,14 +68,14 @@ func main() {
 		almanac[map_from] = entry
 
 	}
-	pinfo("")
-	for k, a := range path {
-		pinfo(k, almanac[a])
-	}
+	// pinfo("")
+	// for k, a := range path {
+	// 	pinfo(k, almanac[a])
+	// }
 
 	part1res := part1(almanac, seeds)
-	part2res := part2(almanac, seeds)
 	fmt.Println("part 1 =", part1res)
+	part2res := part2(almanac, seeds)
 	fmt.Println("part 2 =", part2res)
 }
 
@@ -91,7 +91,7 @@ func part1(almanac map[string]resmap, seeds []int64) (result int64) {
 				}
 			}
 		}
-		pinfo("location=", s)
+		// pinfo("location=", s)
 		if result == 0 || s < result {
 			result = s
 		}
@@ -109,7 +109,7 @@ func part2(almanac map[string]resmap, seeds []int64) (result int64) {
 
 		from := seeds[0]
 		cnt := seeds[1]
-		pinfo("=====>", from, cnt)
+		// pinfo("=====>", from, cnt)
 		for s := from; s < (from + cnt); s++ {
 			calc := s
 			for _, p := range path {

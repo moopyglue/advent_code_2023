@@ -1,0 +1,4 @@
+$ go run . data.txt
+part 1 = 525911
+part 2 = 75805607
+

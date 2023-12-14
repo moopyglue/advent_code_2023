@@ -1,0 +1,4 @@
+$ go run . data.txt
+[part1 33122]
+[part2 32312]
+

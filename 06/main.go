@@ -14,9 +14,14 @@ var debug = map[string]bool{"info": true}
 
 func main() {
 
-	var data = getlines()
-	part1res := part1(data)
-	fmt.Println("part 1 =", part1res)
+	data := getlines()
+
+	part2res := int64(1)
+	for _, line := range data {
+		k := strings.Split(line, " ")
+		part2res = part2res * win_count(i64(k[0]), i64(k[1]))
+	}
+	fmt.Println("part 2 =", part2res)
 }
 
 func win_count(length, record int64) (result int64) {
@@ -28,17 +33,6 @@ func win_count(length, record int64) (result int64) {
 		}
 	}
 	return
-}
-
-func part1(data []string) (result int64) {
-
-	result = 1
-	for _, line := range getlines() {
-		k := strings.Split(line, " ")
-		result = result * win_count(i64(k[0]), i64(k[1]))
-	}
-	return
-
 }
 
 // quick and dirty string to int64 conversion to make code more

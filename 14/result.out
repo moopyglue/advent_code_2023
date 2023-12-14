@@ -1,0 +1,5 @@
+$ go run . data.txt
+[part1 106990]
+[found repeating cycle of 39]
+[part2 100531]
+

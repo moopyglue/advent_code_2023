@@ -32,7 +32,6 @@ func main() {
 				seeny[y] = true
 			}
 		}
-
 	}
 
 	multiplier := 1000000
@@ -60,23 +59,16 @@ func main() {
 		points = append(points, node{p.x + modx[p.x], p.y + mody[p.y]})
 	}
 
-	//part1 - calculate distances between each of all the galaxies
-	part1res := 0
+	//part2 - calculate distances between each of all the galaxies
+	part2res := 0
 	for a := 0; a < len(points); a++ {
 		for b := a + 1; b < len(points); b++ {
-			part1res += abs(points[a].x - points[b].x)
-			part1res += abs(points[a].y - points[b].y)
-			//pinfo(a, b, points[a], points[b], part1res)
+			part2res += abs(points[a].x - points[b].x)
+			part2res += abs(points[a].y - points[b].y)
 		}
 	}
 
-	// pinfo(foundpoints)
-	// pinfo(points)
-	// pinfo(modx[:len(data[0])])
-	// pinfo(mody[:len(data)])
-
-	fmt.Println("part 1 =", part1res)
-	//fmt.Println("part 2 =", part2res)
+	fmt.Println("part 1 =", part2res)
 }
 
 func abs(i int) int {

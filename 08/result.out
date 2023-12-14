@@ -1,0 +1,10 @@
+$ go run . data.txt
+[PART 1]
+[locations= AAA]
+[   counts= 20659]
+[PART 2]
+[locations= [RKA QKA VMA JMA AAA LBA]]
+[   counts= [22357 12169 20093 18961 20659 13301]]
+part 1 = 20659
+part 2 = 15690466351717
+

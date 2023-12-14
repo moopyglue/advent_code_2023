@@ -19,16 +19,15 @@ type row struct {
 
 func main() {
 
-	fives := true
+	data := getlines()
 	pinfo("starting")
 	// load source data into 'rows' structure
 	rows := []row{}
-	for _, v := range getlines() {
+	rows5 := []row{}
+	for _, v := range data {
+
+		// single copy - part 1
 		a := strings.Split(v, " ")
-		if fives {
-			a[0] = a[0] + "?" + a[0] + "?" + a[0] + "?" + a[0] + "?" + a[0]
-			a[1] = a[1] + "," + a[1] + "," + a[1] + "," + a[1] + "," + a[1]
-		}
 		b := strings.Split(a[1], ",")
 		p := []int{}
 		s := 0
@@ -38,18 +37,43 @@ func main() {
 		}
 		s += len(p) - 1
 		rows = append(rows, row{line: a[0], cnts: p})
+
+		// 5x copy - part 2
+		a5 := strings.Split(v, " ")
+		a5[0] = a5[0] + "?" + a5[0] + "?" + a5[0] + "?" + a5[0] + "?" + a5[0]
+		a5[1] = a5[1] + "," + a5[1] + "," + a5[1] + "," + a5[1] + "," + a5[1]
+		b = strings.Split(a5[1], ",")
+		p = []int{}
+		s = 0
+		for _, k := range b {
+			i, _ := strconv.ParseInt(k, 10, 0)
+			p = append(p, int(i))
+		}
+		s += len(p) - 1
+		rows5 = append(rows5, row{line: a5[0], cnts: p})
+
 	}
 
 	// for each row calculate the cost
-	result := 0
+	part1res := 0
 	for n := 0; n < len(rows); n++ {
 		pinfo(rows[n])
 		count := count_matches(rows[n].line, rows[n].cnts)
-		result += count
-		pinfo(n+1, count, result)
+		part1res += count
+		pinfo(n+1, count, part1res)
+	}
+	fmt.Println("part1 =", part1res)
+
+	// for each row calculate the cost
+	part2res := 0
+	for n := 0; n < len(rows5); n++ {
+		pinfo(rows5[n])
+		count := count_matches(rows5[n].line, rows5[n].cnts)
+		part2res += count
+		pinfo(n+1, count, part2res)
 	}
 
-	fmt.Println("result", result)
+	fmt.Println("part2 =", part2res)
 }
 
 var cache = map[string]int{}
