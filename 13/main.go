@@ -1,4 +1,4 @@
-// AOC 2023 - day 11 - Cosmic Expansion
+// AOC 2023 - day 13 - Point of Incidence
 
 package main
 

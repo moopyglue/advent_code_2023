@@ -1,4 +1,4 @@
-// AOC 2023 - day 12 -
+// AOC 2023 - day 12 - Hot Springs
 
 package main
 
